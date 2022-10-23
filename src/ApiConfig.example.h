@@ -1,6 +1,8 @@
 #ifndef APICONFIG_H
 #define APICONFIG_H
 
+#include "src/main.h"
+
 /*
  * Example configuration file to access OpenWeather API
  * API_KEY: Key to access the API calls
@@ -14,5 +16,12 @@
 /* LONDON */
 #define CITY_LAT 51.5085
 #define CITY_LON -0.1257
+#define HTTP_METHOD "GET "
+
+extern char host_name[];
+extern String weather_api;
+extern String api_key;
+extern String query;
+extern String request;
 
 #endif /* APICONFIG_H */

@@ -1,4 +1,4 @@
-#include "webclient.h"
+#include "WebClient.h"
 
 char ssid[] = WIFI_SSID;
 char pass[] = WIFI_PASS;
@@ -12,7 +12,6 @@ void PrintWiFiStatus();
 void WiFiSetup()
 {
   WiFi.setPins(WIFI_SHIELD_PINS);
-  Serial.begin(115200);
 
   /* Wait for Serial to init*/
   while (!Serial)
