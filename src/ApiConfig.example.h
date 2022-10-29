@@ -1,7 +1,7 @@
 #ifndef APICONFIG_H
 #define APICONFIG_H
 
-#include "src/main.h"
+#include "main.h"
 
 /*
  * Example configuration file to access OpenWeather API
@@ -20,7 +20,7 @@
 
 extern char host_name[];
 extern String weather_api;
-extern String api_key;
+extern String req_base;
 extern String query;
 extern String request;
 

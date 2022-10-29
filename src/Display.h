@@ -1,7 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include "Main.h"
+#include "main.h"
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_SSD1306.h>
