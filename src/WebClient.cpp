@@ -38,16 +38,14 @@ void WiFiSetup()
     delay(10000);
   }
 
-  Serial.println("Connected.");
+  Serial.println("Connected to:");
+  PrintWiFiStatus();
 }
 
 void PrintWiFiStatus()
 {
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
-  IPAddress ip_address = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip_address);
   long rssi = WiFi.RSSI();
   Serial.print("Signal (RSSI): ");
   Serial.print(rssi);

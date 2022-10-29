@@ -22,6 +22,13 @@ void setup()
   /* WiFi client setup, WiFi network connection */
   WiFiSetup();
 
+  /* Initialize display and clear it */
+  Display_InitScreen();
+  Display_Clear();
+
+  Display_InitIO();
+  Display_InitText();
+
   /* Make the request */
   ApiRequest();
 
@@ -35,6 +42,8 @@ void setup()
   Serial.println(String(main_humidity));
   Serial.println(String(sys_country));
   Serial.println(String(name));
+  Serial.println(parsed_date);
+  Serial.println(parsed_time);
 }
 
 void loop()
@@ -43,8 +52,11 @@ void loop()
 
 void ApiRequest()
 {
-  client.setTimeout(10000); /* 10s connection and request timeout */
-  Serial.println("\nStarting connection to server...");
+  client.setTimeout(20000); /* 10s connection and request timeout */
+  Serial.println("\nAttempting connection...");
+  display.println("Connection attempt...");
+  display.display();
+
   if (client.connect(host_name, HTTP_PORT))
   {
     Serial.println("\nConnected to " + String(host_name));

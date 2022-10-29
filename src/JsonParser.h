@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include <ArduinoJson.h>
+#include <TimeLib.h>
 
 #define DOC_CAPACITY 1024
 
@@ -16,7 +17,15 @@ extern int main_humidity;
 
 extern const char *sys_country;
 extern const char *name;
+extern long long dt;
+extern String parsed_time;
+extern String parsed_date;
+
+extern char time_buffer;
+extern char date_buffer;
 
 extern void ParseJson(Stream &res_data);
+extern String ParseTime(long long datetime);
+extern String ParseDate(long long datetime);
 
 #endif /* JSONPARSER_H */

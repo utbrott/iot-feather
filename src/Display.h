@@ -10,8 +10,20 @@
 #define BUTTON_A 9
 #define BUTTON_B 6
 #define BUTTON_C 5
-#define WIRE Wire
 
 extern Adafruit_SSD1306 display;
+
+/* Initialize the display */
+extern void Display_InitScreen();
+extern void Display_InitIO();
+
+/* Clear Display */
+extern void Display_Clear();
+
+/* Set Text Style */
+extern void Display_InitText();
+
+/* Display formatted data */
+extern void Display_ShowData();
 
 #endif /* DISPLAY_H */
