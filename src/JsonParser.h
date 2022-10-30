@@ -5,7 +5,7 @@
 #include <ArduinoJson.h>
 #include <TimeLib.h>
 
-#define DOC_CAPACITY 1024
+#define DOC_CAPACITY 2048
 
 extern StaticJsonDocument<DOC_CAPACITY> json_doc;
 extern DeserializationError json_error;

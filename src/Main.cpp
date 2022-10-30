@@ -5,16 +5,18 @@
  */
 /* Private variables*/
 String res_data = "";
-unsigned long last_response;
-
-String location = String(name) + ", " + String(sys_country);
-String real_temperature = "Measured: " + String(main_temp) + "°C";
-String feelslike_temperature = "Feels like: " + String(main_feels_like) + "°C";
-String pressure = "Pressure: " + String(main_pressure) + "hPa";
-String humidity = "Humidity: " + String(main_humidity) + "%";
+unsigned long last_update = 0;
+const long update_interval = 5000;
+String location;
+String real_temperature;
+String feelslike_temperature;
+String pressure;
+String humidity;
 
 /* Private function prototypes*/
+void Update_ResponseValues();
 void OnButtonPress(ButtonType_t btn);
+void Interrupt_ButtonA();
 void Display_ShowData(DataType_t data);
 
 /*
@@ -25,15 +27,17 @@ void setup()
   /* Begins Serial at 115200 baud */
   Serial.begin(115200);
 
-  /* WiFi client setup, WiFi network connection */
-  WiFiSetup();
-
   /* Initialize display and clear it */
   Display_InitScreen();
   Display_Clear();
-
   Display_InitIO();
   Display_InitText();
+
+  /* WiFi client setup, WiFi network connection */
+  WiFiSetup();
+
+  /* Interrupt based api data refresh */
+  attachInterrupt(digitalPinToInterrupt(BUTTON_A), Interrupt_ButtonA, RISING);
 
   /* Make the request */
   ApiRequest();
@@ -41,27 +45,35 @@ void setup()
   {
     Display_FailedMessage();
   }
-
   /* Parse received data */
   ParseJson(client);
-
-  // /* Print the data to Serial */
-  Serial.println(String(main_temp));
-  Serial.println(String(main_feels_like));
-  Serial.println(String(main_pressure));
-  Serial.println(String(main_humidity));
-  Serial.println(String(sys_country));
-  Serial.println(String(name));
-  Serial.println(parsed_date);
-  Serial.println(parsed_time);
+  Update_ResponseValues();
+  /* Print to Serial for debug */
+  Serial.println(name);
+  Serial.println(sys_country);
+  Serial.println(main_temp);
+  Serial.println(main_feels_like);
+  Serial.println(main_pressure);
+  Serial.println(main_humidity);
 }
 
 void loop()
 {
-  if (!digitalRead(BUTTON_A))
-  {
-    OnButtonPress(A);
-  }
+  Display_ShowData(INFO);
+  delay(2000);
+  Display_ShowData(TEMPERATURE);
+  delay(2000);
+  Display_ShowData(AROUND);
+  delay(2000);
+}
+
+void Update_ResponseValues()
+{
+  String location = String(name) + ", " + String(sys_country);
+  String real_temperature = "Measured: " + String(main_temp) + "°C";
+  String feelslike_temperature = "Feels like: " + String(main_feels_like) + "°C";
+  String pressure = "Pressure: " + String(main_pressure) + "hPa";
+  String humidity = "Humidity: " + String(main_humidity) + "%";
 }
 
 void OnButtonPress(ButtonType_t btn)
@@ -98,6 +110,11 @@ void OnButtonPress(ButtonType_t btn)
   }
 }
 
+void Interrupt_ButtonA()
+{
+  OnButtonPress(A);
+}
+
 void Display_ShowData(DataType_t data)
 {
   switch (data)
@@ -105,9 +122,9 @@ void Display_ShowData(DataType_t data)
   case INFO:
     display.println("");
     display.println(location);
-    display.print(parsed_date);
+    display.println(parsed_date);
     display.print("Last check: ");
-    display.print(parsed_time);
+    display.println(parsed_time);
     display.display();
     break;
   case TEMPERATURE:

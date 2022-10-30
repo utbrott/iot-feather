@@ -39,7 +39,7 @@ void WiFiSetup()
     Display_WiFiMessage();
 
     status = WiFi.begin(ssid, pass);
-    delay(2000);
+    delay(10000);
   }
 
   Serial.println("\nConnected to:");
