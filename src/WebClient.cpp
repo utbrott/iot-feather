@@ -1,7 +1,9 @@
 #include "WebClient.h"
+#include "Display.h"
 
 char ssid[] = WIFI_SSID;
 char pass[] = WIFI_PASS;
+bool req_error = false;
 
 int status = WL_IDLE_STATUS;
 
@@ -31,14 +33,16 @@ void WiFiSetup()
   /* Attempt to initialize connection */
   if (WiFi.status() != WL_CONNECTED)
   {
-    Serial.print("Attempting connection to: ");
+    Serial.println("\nAttempting connection to: ");
     Serial.println(ssid);
 
+    Display_WiFiMessage();
+
     status = WiFi.begin(ssid, pass);
-    delay(10000);
+    delay(2000);
   }
 
-  Serial.println("Connected to:");
+  Serial.println("\nConnected to:");
   PrintWiFiStatus();
 }
 
@@ -50,4 +54,55 @@ void PrintWiFiStatus()
   Serial.print("Signal (RSSI): ");
   Serial.print(rssi);
   Serial.println("dBm");
+}
+
+void ApiRequest()
+{
+  client.setTimeout(10000); /* 10s connection and request timeout */
+  Serial.println("\nAttempting connection...");
+
+  display.println("Connection attempt...");
+  display.display();
+
+  if (client.connect(host_name, HTTP_PORT))
+  {
+    Serial.println("\nConnected to " + String(host_name));
+    Display_ApiMessage();
+    client.println(request);
+    client.println("Host: " + String(host_name));
+    client.println("Connection: close");
+    client.println();
+
+    /* Error handling */
+    if (client.println() == 0)
+    {
+      Serial.println("Request failed.");
+      req_error = true;
+      return;
+    }
+
+    char res_status[32] = {0};
+    char http_200[] = "HTTP/1.1 200 OK";
+    client.readBytesUntil('\r', res_status, sizeof(res_status));
+    if (strcmp(res_status, http_200) != 0)
+    {
+      Serial.print("Unhandled response: ");
+      Serial.println(res_status);
+      req_error = true;
+      return;
+    }
+
+    char end_of_headers[] = "\r\n\r\n";
+    if (!client.find(end_of_headers))
+    {
+      Serial.println("Response invalid.");
+      req_error = true;
+      return;
+    }
+  }
+  else
+  {
+    Serial.println("Connection failed.");
+    req_error = true;
+  }
 }

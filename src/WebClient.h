@@ -5,6 +5,9 @@
 #include <SPI.h>
 #include <WiFi101.h>
 #include "WifiConfig.h"
+#include "ApiConfig.h"
+
+#define HTTP_PORT 80
 
 /* WiFi Client */
 extern WiFiClient client;
@@ -14,5 +17,8 @@ extern void WiFiSetup();
 
 /* Printing WiFi Status */
 extern void PrintWiFiStatus();
+
+/* API Call */
+extern void ApiRequest();
 
 #endif /* WEBCLIENT_H */

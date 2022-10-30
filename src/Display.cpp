@@ -28,4 +28,26 @@ void Display_InitText()
   display.setCursor(0, 0);
 }
 
-void Display_ShowData();
+void Display_WiFiMessage()
+{
+  Display_Clear();
+  display.println("");
+  display.println("WiFi connection...");
+  display.display();
+}
+
+void Display_ApiMessage()
+{
+  Display_Clear();
+  display.println("");
+  display.println("Fetching data...");
+  display.display();
+}
+
+void Display_FailedMessage()
+{
+  Display_Clear();
+  display.println("");
+  display.println("Request failed.");
+  display.display();
+}

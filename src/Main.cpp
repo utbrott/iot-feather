@@ -4,12 +4,12 @@
  * @brief : Private declarations
  */
 /* Private variables*/
-bool req_error = false;
 String res_data = "";
 unsigned long last_response;
 
 /* Private function prototypes*/
-void ApiRequest();
+void OnButtonPress(ButtonType_t btn);
+void Display_ShowData(DataType_t data);
 
 /*
  * @brief : Application entry point
@@ -31,6 +31,10 @@ void setup()
 
   /* Make the request */
   ApiRequest();
+  if (req_error)
+  {
+    Display_FailedMessage();
+  }
 
   /* Parse received data */
   ParseJson(client);
@@ -48,53 +52,4 @@ void setup()
 
 void loop()
 {
-}
-
-void ApiRequest()
-{
-  client.setTimeout(20000); /* 10s connection and request timeout */
-  Serial.println("\nAttempting connection...");
-  display.println("Connection attempt...");
-  display.display();
-
-  if (client.connect(host_name, HTTP_PORT))
-  {
-    Serial.println("\nConnected to " + String(host_name));
-    client.println(request);
-    client.println("Host: " + String(host_name));
-    client.println("Connection: close");
-    client.println();
-
-    /* Error handling */
-    if (client.println() == 0)
-    {
-      Serial.println("Request failed.");
-      req_error = true;
-      return;
-    }
-
-    char res_status[32] = {0};
-    char http_200[] = "HTTP/1.1 200 OK";
-    client.readBytesUntil('\r', res_status, sizeof(res_status));
-    if (strcmp(res_status, http_200) != 0)
-    {
-      Serial.print("Unhandled response: ");
-      Serial.println(res_status);
-      req_error = true;
-      return;
-    }
-
-    char end_of_headers[] = "\r\n\r\n";
-    if (!client.find(end_of_headers))
-    {
-      Serial.println("Response invalid.");
-      req_error = true;
-      return;
-    }
-  }
-  else
-  {
-    Serial.println("Connection failed.");
-    req_error = true;
-  }
 }

@@ -23,6 +23,11 @@ extern void Display_Clear();
 /* Set Text Style */
 extern void Display_InitText();
 
+/* Connection messages */
+extern void Display_WiFiMessage();
+extern void Display_ApiMessage();
+extern void Display_FailedMessage();
+
 /* Display formatted data */
 extern void Display_ShowData();
 
