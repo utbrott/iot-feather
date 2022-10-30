@@ -11,6 +11,7 @@
 
 /* WiFi Client */
 extern WiFiClient client;
+extern bool req_error;
 
 /* Setup WiFi */
 extern void WiFiSetup();
