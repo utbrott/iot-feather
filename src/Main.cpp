@@ -59,12 +59,6 @@ void setup()
 
 void loop()
 {
-  Display_ShowData(INFO);
-  delay(2000);
-  Display_ShowData(TEMPERATURE);
-  delay(2000);
-  Display_ShowData(AROUND);
-  delay(2000);
 }
 
 void Update_ResponseValues()

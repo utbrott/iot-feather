@@ -40,6 +40,11 @@ void Display_ApiMessage()
 {
   Display_Clear();
   display.println("");
+  display.println("Host connection...");
+  display.display();
+}
+void Display_FetchData()
+{
   display.println("Fetching data...");
   display.display();
 }

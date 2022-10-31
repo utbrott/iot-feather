@@ -61,13 +61,12 @@ void ApiRequest()
   client.setTimeout(10000); /* 10s connection and request timeout */
   Serial.println("\nAttempting connection...");
 
-  display.println("Connection attempt...");
-  display.display();
+  Display_ApiMessage();
 
   if (client.connect(host_name, HTTP_PORT))
   {
     Serial.println("\nConnected to " + String(host_name));
-    Display_ApiMessage();
+    Display_FetchData();
     client.println(request);
     client.println("Host: " + String(host_name));
     client.println("Connection: close");
