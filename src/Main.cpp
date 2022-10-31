@@ -46,9 +46,10 @@ void setup()
   }
   /* Parse received data */
   ParseJson(client);
+  String location = String(name) + ", " + String(sys_country);
+
   Display_ShowData(INFO);
   /* Print to Serial for debug */
-  String location = String(name) + ", " + String(sys_country);
   Serial.println(location);
   Serial.println(main_temp);
   Serial.println(main_feels_like);
@@ -58,15 +59,6 @@ void setup()
 
 void loop()
 {
-}
-
-void Update_ResponseValues()
-{
-  String location = String(name) + ", " + String(sys_country);
-  String real_temperature = "Measured: " + String(main_temp) + "°C";
-  String feelslike_temperature = "Feels like: " + String(main_feels_like) + "°C";
-  String pressure = "Pressure: " + String(main_pressure) + "hPa";
-  String humidity = "Humidity: " + String(main_humidity) + "%";
 }
 
 void OnButtonPress(ButtonType_t btn)
@@ -114,9 +106,11 @@ void Display_ShowData(DataType_t data)
   {
   case INFO:
     Display_Clear();
-    display.println(location);
+    display.print(name);
+    display.print(", ");
+    display.println(sys_country);
+    display.println("Last check:");
     display.println(parsed_date);
-    display.print("Last check: ");
     display.println(parsed_time);
     display.display();
     break;

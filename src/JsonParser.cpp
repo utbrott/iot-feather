@@ -37,9 +37,11 @@ void ParseJson(Stream &res_data)
   sys_country = sys["country"];
   name = json_doc["name"];
   long long dt = json_doc["dt"];
+  long long timezone = json_doc["timezone"];
+  long long adjusted_dt = dt + timezone;
 
-  parsed_date = ParseDate(dt);
-  parsed_time = ParseTime(dt);
+  parsed_date = ParseDate(adjusted_dt);
+  parsed_time = ParseTime(adjusted_dt);
 }
 
 String ParseTime(long long datetime)

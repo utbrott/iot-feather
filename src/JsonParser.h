@@ -18,6 +18,8 @@ extern int main_humidity;
 extern const char *sys_country;
 extern const char *name;
 extern long long dt;
+extern long long timezone;
+extern long long adjusted_dt;
 extern String parsed_time;
 extern String parsed_date;
 
