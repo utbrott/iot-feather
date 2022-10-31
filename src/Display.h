@@ -27,6 +27,7 @@ extern void Display_InitText();
 extern void Display_WiFiMessage();
 extern void Display_ApiMessage();
 extern void Display_FetchData();
+extern void Display_SuccessMessage();
 extern void Display_FailedMessage();
 
 /* Display formatted data */

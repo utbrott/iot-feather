@@ -19,6 +19,7 @@ void Display_Clear()
 {
   display.clearDisplay();
   display.display();
+  display.setCursor(0, 0);
 }
 
 void Display_InitText()
@@ -31,7 +32,6 @@ void Display_InitText()
 void Display_WiFiMessage()
 {
   Display_Clear();
-  display.println("");
   display.println("WiFi connection...");
   display.display();
 }
@@ -39,7 +39,6 @@ void Display_WiFiMessage()
 void Display_ApiMessage()
 {
   Display_Clear();
-  display.println("");
   display.println("Host connection...");
   display.display();
 }
@@ -49,10 +48,15 @@ void Display_FetchData()
   display.display();
 }
 
+void Display_SuccessMessage()
+{
+  display.println("Response OK");
+  display.display();
+}
+
 void Display_FailedMessage()
 {
   Display_Clear();
-  display.println("");
   display.println("Request failed.");
   display.display();
 }

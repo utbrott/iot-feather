@@ -14,7 +14,6 @@ String pressure;
 String humidity;
 
 /* Private function prototypes*/
-void Update_ResponseValues();
 void OnButtonPress(ButtonType_t btn);
 void Interrupt_ButtonA();
 void Display_ShowData(DataType_t data);
@@ -47,10 +46,10 @@ void setup()
   }
   /* Parse received data */
   ParseJson(client);
-  Update_ResponseValues();
+  Display_ShowData(INFO);
   /* Print to Serial for debug */
-  Serial.println(name);
-  Serial.println(sys_country);
+  String location = String(name) + ", " + String(sys_country);
+  Serial.println(location);
   Serial.println(main_temp);
   Serial.println(main_feels_like);
   Serial.println(main_pressure);
@@ -114,7 +113,7 @@ void Display_ShowData(DataType_t data)
   switch (data)
   {
   case INFO:
-    display.println("");
+    Display_Clear();
     display.println(location);
     display.println(parsed_date);
     display.print("Last check: ");

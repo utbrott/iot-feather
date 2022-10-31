@@ -43,6 +43,8 @@ void WiFiSetup()
   }
 
   Serial.println("\nConnected to:");
+  display.println("WiFi connected.");
+  display.display();
   PrintWiFiStatus();
 }
 
