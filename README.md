@@ -12,10 +12,7 @@ Visit the [Wiki](https://github.com/utbrott/iot-feather/wiki) to read more about
 - MCP9808 Sensor to read surrouding's accurate temperature.
 
 # Built with
-- Adafruit Feather M0 (ATSAM21 + ATWINC1500) uController
-
-[![Adafruit Shop](https://img.shields.io/badge/shop-000000?style=for-the-badge&logo=adafruit)](https://www.adafruit.com/product/3010)
-
+- [Adafruit Feather M0](https://www.adafruit.com/product/3010) (ATSAM21 + ATWINC1500) uController
 - Adafruit OLED FeatherWing 128x32 128x32 display shield
 - BME280 I2C/SPI Sensor Breakout Board
 - MCP9808 I2C/SPI Sensor Breakout Board
