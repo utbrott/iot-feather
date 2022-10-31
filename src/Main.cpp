@@ -106,10 +106,12 @@ void Display_ShowData(DataType_t data)
   {
   case INFO:
     Display_Clear();
-    display.print(name);
-    display.print(", ");
-    display.println(sys_country);
-    display.println("Last check:");
+    String location = String(name) + ", " + String(sys_country);
+    // display.print(name);
+    // display.print(", ");
+    // display.println(sys_country);
+    display.println(location);
+    display.println("Last fetch:");
     display.println(parsed_date);
     display.println(parsed_time);
     display.display();

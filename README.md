@@ -2,6 +2,9 @@
 Embedded Systems IOT project that utilizes Adafruit Feather M0, OpenWeatherMap
 to create a simple home weather station.
 
+Link to Wiki of the project: [Wiki](https://github.com/utbrott/iot-feather/wiki)
+<h6>Warning: Currently project's Wiki is only in Polish, as the course is in Polish</h6>
+
 # Features
 - Requesting data from OpenWeatherMap for outside weather data,
 - BME280 Sensor to read surrouding's general temperature, humidity and pressure
