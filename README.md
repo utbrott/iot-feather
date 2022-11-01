@@ -33,6 +33,8 @@ Visit the [Wiki](https://github.com/utbrott/iot-feather/wiki) to read more about
 |   |- WifiConfig.cpp
 |   |- Display.h (working with oled display)
 |   |- Display.cpp
+|   |- JsonParser.h (parsing the reponse from API)
+|   |- JsonParser.cpp
 |
 |- LICENSE
 |- platformio.ini
