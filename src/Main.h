@@ -11,6 +11,7 @@ typedef enum
   A,
   B,
   C,
+  NOT_PRESSED,
 } ButtonType_t;
 
 typedef enum
