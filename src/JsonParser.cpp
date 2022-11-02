@@ -42,6 +42,12 @@ void ParseJson(Stream &res_data)
 
   parsed_date = ParseDate(adjusted_dt);
   parsed_time = ParseTime(adjusted_dt);
+
+  /* */
+  real_temperature = String(main_temp) + " C";
+  feelslike_temperature = String(main_feels_like) + " C";
+  pressure = String(main_pressure) + " C";
+  humidity = String(main_humidity) + " hPa";
 }
 
 String ParseTime(long long datetime)

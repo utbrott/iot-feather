@@ -12,6 +12,7 @@ String real_temperature;
 String feelslike_temperature;
 String pressure;
 String humidity;
+ButtonType_t flag = NOT_PRESSED;  // A button interrupt flag
 
 /* Private function prototypes*/
 void OnButtonPress(ButtonType_t btn);
@@ -21,6 +22,7 @@ void Display_ShowData(DataType_t data);
 /*
  * @brief : Application entry point
  */
+
 void setup()
 {
   /* Begins Serial at 115200 baud */
@@ -46,7 +48,7 @@ void setup()
   }
   /* Parse received data */
   ParseJson(client);
-  String location = String(name) + ", " + String(sys_country);
+  location = String(name) + ", " + String(sys_country);
 
   Display_ShowData(INFO);
   /* Print to Serial for debug */
@@ -59,6 +61,16 @@ void setup()
 
 void loop()
 {
+  if(flag == A) {
+    OnButtonPress(A);
+    flag = NOT_PRESSED;
+  } else if(flag == B) {
+    // OnButtonPress(B);
+    flag = NOT_PRESSED;
+  } else if (flag == C) {
+    // OnButtonPress(C);
+    flag = NOT_PRESSED;
+  }
 }
 
 void OnButtonPress(ButtonType_t btn)
@@ -67,16 +79,16 @@ void OnButtonPress(ButtonType_t btn)
   {
   case A:
     ApiRequest();
-
     if (req_error)
     {
       Display_FailedMessage();
       return;
     }
-
     /* Parse received data */
     ParseJson(client);
+    location = String(name) + ", " + String(sys_country);
     /* Print to Serial for debug */
+    
     Serial.println(location);
     Serial.print(parsed_date);
     Serial.print(" ");
@@ -85,6 +97,15 @@ void OnButtonPress(ButtonType_t btn)
     Serial.println(feelslike_temperature);
     Serial.println(pressure);
     Serial.println(humidity);
+
+    Display_ShowData(INFO);
+    delay(2000);
+    Display_ShowData(TEMPERATURE);
+    delay(2000);
+    Display_ShowData(AROUND);
+    delay(2000);
+    Display_Clear();
+    
     break;
   case B:
     break;
@@ -97,7 +118,8 @@ void OnButtonPress(ButtonType_t btn)
 
 void Interrupt_ButtonA()
 {
-  OnButtonPress(A);
+  //OnButtonPress(A);
+  flag = A;
 }
 
 void Display_ShowData(DataType_t data)
@@ -106,10 +128,9 @@ void Display_ShowData(DataType_t data)
   {
   case INFO:
     Display_Clear();
-    String location = String(name) + ", " + String(sys_country);
-    // display.print(name);
-    // display.print(", ");
-    // display.println(sys_country);
+    //display.print(name);
+    //display.print(", ");
+    //display.println(sys_country);
     display.println(location);
     display.println("Last fetch:");
     display.println(parsed_date);
@@ -117,12 +138,14 @@ void Display_ShowData(DataType_t data)
     display.display();
     break;
   case TEMPERATURE:
+    Display_Clear();
     display.println("");
     display.println(real_temperature);
     display.println(feelslike_temperature);
     display.display();
     break;
   case AROUND:
+    Display_Clear();
     display.println("");
     display.println(pressure);
     display.println(humidity);
