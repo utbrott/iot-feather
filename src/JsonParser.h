@@ -1,7 +1,7 @@
 #ifndef JSONPARSER_H
 #define JSONPARSER_H
 
-#include "main.h"
+#include "Main.h"
 #include <ArduinoJson.h>
 #include <TimeLib.h>
 
