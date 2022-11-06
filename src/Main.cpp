@@ -12,11 +12,15 @@ String real_temperature;
 String feelslike_temperature;
 String pressure;
 String humidity;
+String indoor_humidity;
+String indoor_pressure;
+String indoor_temperature;
 ButtonType_t flag = NOT_PRESSED; // A button interrupt flag
 
 /* Private function prototypes*/
 void OnButtonPress(ButtonType_t btn);
 void Interrupt_ButtonA();
+void Interrupt_ButtonB();
 void Display_ShowData(DataType_t data);
 
 /*
@@ -27,6 +31,9 @@ void setup()
 {
   /* Begins Serial at 115200 baud */
   Serial.begin(115200);
+
+  /* Initialize BME280 sensor */
+  BME280_Init();
 
   /* Initialize display and clear it */
   Display_InitScreen();
@@ -39,6 +46,7 @@ void setup()
 
   /* Interrupt based api data refresh */
   attachInterrupt(digitalPinToInterrupt(BUTTON_A), Interrupt_ButtonA, RISING);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_B), Interrupt_ButtonB, RISING);
 
   /* Make the request */
   ApiRequest();
@@ -68,7 +76,7 @@ void loop()
   }
   else if (flag == B)
   {
-    // OnButtonPress(B);
+    OnButtonPress(B);
     flag = NOT_PRESSED;
   }
   else if (flag == C)
@@ -113,6 +121,17 @@ void OnButtonPress(ButtonType_t btn)
 
     break;
   case B:
+    BME280_Read();
+    Display_ShowData(INDOOR);
+    Serial.println("INDOOR MEASUREMENTS - BME280");
+    Serial.println("Temperature:");
+    Serial.println(BME280_temperature());
+    Serial.println("Humidity:");
+    Serial.println(BME280_humidity());
+    Serial.println("Pressure:");
+    Serial.println(BME280_pressure());
+    delay(7000);
+    Display_Clear();
     break;
   case C:
     break;
@@ -123,8 +142,12 @@ void OnButtonPress(ButtonType_t btn)
 
 void Interrupt_ButtonA()
 {
-  // OnButtonPress(A);
   flag = A;
+}
+
+void Interrupt_ButtonB()
+{
+  flag = B;
 }
 
 void Display_ShowData(DataType_t data)
@@ -147,6 +170,14 @@ void Display_ShowData(DataType_t data)
     display.println("");
     display.println(real_temperature);
     display.println(feelslike_temperature);
+    display.display();
+    break;
+  case INDOOR:
+    Display_Clear();
+    display.println("Indoor - BME280");
+    display.println(indoor_temperature);
+    display.println(indoor_humidity);
+    display.println(indoor_pressure);
     display.display();
     break;
   case AROUND:
