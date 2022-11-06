@@ -1,7 +1,7 @@
 #ifndef WEBCLIENT_H
 #define WEBCLIENT_H
 
-#include "main.h"
+#include "Main.h"
 #include <SPI.h>
 #include <WiFi101.h>
 #include "WifiConfig.h"

@@ -1,4 +1,4 @@
-#include "main.h"
+#include "Main.h"
 
 /*
  * @brief : Private declarations
@@ -12,7 +12,7 @@ String real_temperature;
 String feelslike_temperature;
 String pressure;
 String humidity;
-ButtonType_t flag = NOT_PRESSED;  // A button interrupt flag
+ButtonType_t flag = NOT_PRESSED; // A button interrupt flag
 
 /* Private function prototypes*/
 void OnButtonPress(ButtonType_t btn);
@@ -61,13 +61,18 @@ void setup()
 
 void loop()
 {
-  if(flag == A) {
+  if (flag == A)
+  {
     OnButtonPress(A);
     flag = NOT_PRESSED;
-  } else if(flag == B) {
+  }
+  else if (flag == B)
+  {
     // OnButtonPress(B);
     flag = NOT_PRESSED;
-  } else if (flag == C) {
+  }
+  else if (flag == C)
+  {
     // OnButtonPress(C);
     flag = NOT_PRESSED;
   }
@@ -88,7 +93,7 @@ void OnButtonPress(ButtonType_t btn)
     ParseJson(client);
     location = String(name) + ", " + String(sys_country);
     /* Print to Serial for debug */
-    
+
     Serial.println(location);
     Serial.print(parsed_date);
     Serial.print(" ");
@@ -105,7 +110,7 @@ void OnButtonPress(ButtonType_t btn)
     Display_ShowData(AROUND);
     delay(2000);
     Display_Clear();
-    
+
     break;
   case B:
     break;
@@ -118,7 +123,7 @@ void OnButtonPress(ButtonType_t btn)
 
 void Interrupt_ButtonA()
 {
-  //OnButtonPress(A);
+  // OnButtonPress(A);
   flag = A;
 }
 
@@ -128,9 +133,9 @@ void Display_ShowData(DataType_t data)
   {
   case INFO:
     Display_Clear();
-    //display.print(name);
-    //display.print(", ");
-    //display.println(sys_country);
+    // display.print(name);
+    // display.print(", ");
+    // display.println(sys_country);
     display.println(location);
     display.println("Last fetch:");
     display.println(parsed_date);

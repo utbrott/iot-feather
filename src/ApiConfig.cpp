@@ -1,4 +1,4 @@
-#include "apiconfig.h"
+#include "ApiConfig.h"
 
 char host_name[] = "api.openweathermap.org";
 String weather_api = "https://api.openweathermap.org/data/2.5/weather";
