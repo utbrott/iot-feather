@@ -1,7 +1,7 @@
 #ifndef APICONFIG_H
 #define APICONFIG_H
 
-#include "main.h"
+#include "Main.h"
 
 /*
  * Example configuration file to access OpenWeather API
