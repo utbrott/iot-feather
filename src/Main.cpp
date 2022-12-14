@@ -13,12 +13,14 @@ String feelslike_temperature;
 String pressure;
 String humidity;
 ButtonType_t flag = NOT_PRESSED; // A button interrupt flag
+clock_t last_request;
 
 /* Private function prototypes*/
 void OnButtonPress(ButtonType_t btn);
 void Interrupt_ButtonA();
 void Display_ShowData(DataType_t data);
 void MakeRequest();
+bool ValidateRequestInterval();
 
 /*
  * @brief : Application entry point
@@ -62,6 +64,10 @@ void loop()
     // OnButtonPress(C);
     flag = NOT_PRESSED;
   }
+  else
+  {
+    MakeRequest();
+  }
 }
 
 void OnButtonPress(ButtonType_t btn)
@@ -82,6 +88,11 @@ void OnButtonPress(ButtonType_t btn)
 
 void MakeRequest()
 {
+  if (!ValidateRequestInterval())
+  {
+    return;
+  }
+
   ApiRequest();
   if (req_error)
   {
@@ -89,10 +100,12 @@ void MakeRequest()
     return;
   }
 
+  last_request = clock();
+
   /* Parse received data */
   ParseJson(client);
   location = String(name) + ", " + String(sys_country);
-  
+
   /* Print to Serial for debug */
   Serial.println(location);
   Serial.print(parsed_date);
@@ -150,4 +163,15 @@ void Display_ShowData(DataType_t data)
   default:
     break;
   }
+}
+
+bool ValidateRequestInterval()
+{
+  clock_t now = clock();
+  int elapsed_seconds = int(double(now - last_request) / CLOCKS_PER_SEC);
+  if (elapsed_seconds < REQUEST_INTERVAL)
+  {
+    return true;
+  }
+  return false;
 }
