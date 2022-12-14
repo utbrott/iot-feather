@@ -66,7 +66,7 @@ void loop()
   }
   else
   {
-    MakeRequest();
+      MakeRequest();
   }
 }
 
@@ -88,11 +88,6 @@ void OnButtonPress(ButtonType_t btn)
 
 void MakeRequest()
 {
-  if (!ValidateRequestInterval())
-  {
-    return;
-  }
-
   ApiRequest();
   if (req_error)
   {
@@ -119,9 +114,9 @@ void MakeRequest()
   Display_ShowData(INFO);
   delay(2000);
   Display_ShowData(TEMPERATURE);
-  delay(2000);
+  delay(5000);
   Display_ShowData(AROUND);
-  delay(2000);
+  delay(5000);
   Display_Clear();
 }
 
@@ -168,7 +163,7 @@ void Display_ShowData(DataType_t data)
 bool ValidateRequestInterval()
 {
   clock_t now = clock();
-  int elapsed_seconds = int(double(now - last_request) / CLOCKS_PER_SEC);
+  int elapsed_seconds = double(now - last_request) / CLOCKS_PER_SEC;
   if (elapsed_seconds < REQUEST_INTERVAL)
   {
     return true;
