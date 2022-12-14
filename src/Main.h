@@ -5,6 +5,8 @@
 #include "WebClient.h"
 #include "JsonParser.h"
 #include "Display.h"
+#include <ctime>
+#define REQUEST_INTERVAL 600
 #include "IndoorSensors.h"
 
 typedef enum
@@ -20,7 +22,8 @@ typedef enum
   INFO,
   TEMPERATURE,
   AROUND,
-  INDOOR
+  INDOOR,
+  INDOOR_TEMP_PRECISE,
 } DataType_t;
 
 extern String location;

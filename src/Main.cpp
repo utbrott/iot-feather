@@ -16,12 +16,16 @@ String indoor_humidity;
 String indoor_pressure;
 String indoor_temperature;
 ButtonType_t flag = NOT_PRESSED; // A button interrupt flag
+clock_t last_request;
 
 /* Private function prototypes*/
 void OnButtonPress(ButtonType_t btn);
 void Interrupt_ButtonA();
 void Interrupt_ButtonB();
+void Interrupt_ButtonC();
 void Display_ShowData(DataType_t data);
+void MakeRequest();
+bool ValidateRequestInterval();
 
 /*
  * @brief : Application entry point
@@ -35,6 +39,9 @@ void setup()
   /* Initialize BME280 sensor */
   BME280_Init();
 
+  /* Initialize MCP9808 sensor */
+  MCP9808_Init();
+
   /* Initialize display and clear it */
   Display_InitScreen();
   Display_Clear();
@@ -47,24 +54,10 @@ void setup()
   /* Interrupt based api data refresh */
   attachInterrupt(digitalPinToInterrupt(BUTTON_A), Interrupt_ButtonA, RISING);
   attachInterrupt(digitalPinToInterrupt(BUTTON_B), Interrupt_ButtonB, RISING);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_C), Interrupt_ButtonC, RISING);
 
-  /* Make the request */
-  ApiRequest();
-  if (req_error)
-  {
-    Display_FailedMessage();
-  }
-  /* Parse received data */
-  ParseJson(client);
-  location = String(name) + ", " + String(sys_country);
-
-  Display_ShowData(INFO);
-  /* Print to Serial for debug */
-  Serial.println(location);
-  Serial.println(main_temp);
-  Serial.println(main_feels_like);
-  Serial.println(main_pressure);
-  Serial.println(main_humidity);
+  /* Make the first request */
+  MakeRequest();
 }
 
 void loop()
@@ -81,8 +74,12 @@ void loop()
   }
   else if (flag == C)
   {
-    // OnButtonPress(C);
+    OnButtonPress(C);
     flag = NOT_PRESSED;
+  }
+  else
+  {
+      MakeRequest();
   }
 }
 
@@ -91,34 +88,7 @@ void OnButtonPress(ButtonType_t btn)
   switch (btn)
   {
   case A:
-    ApiRequest();
-    if (req_error)
-    {
-      Display_FailedMessage();
-      return;
-    }
-    /* Parse received data */
-    ParseJson(client);
-    location = String(name) + ", " + String(sys_country);
-    /* Print to Serial for debug */
-
-    Serial.println(location);
-    Serial.print(parsed_date);
-    Serial.print(" ");
-    Serial.println(parsed_time);
-    Serial.println(real_temperature);
-    Serial.println(feelslike_temperature);
-    Serial.println(pressure);
-    Serial.println(humidity);
-
-    Display_ShowData(INFO);
-    delay(2000);
-    Display_ShowData(TEMPERATURE);
-    delay(2000);
-    Display_ShowData(AROUND);
-    delay(2000);
-    Display_Clear();
-
+    MakeRequest();
     break;
   case B:
     BME280_Read();
@@ -134,10 +104,51 @@ void OnButtonPress(ButtonType_t btn)
     Display_Clear();
     break;
   case C:
+    MCP9808_Read();
+    Display_ShowData(INDOOR_TEMP_PRECISE);
+    Serial.println("INDOOR TEMPERATURE - MCP9808");
+    Serial.println("Precise temperature:");
+    Serial.println(MCP9808_temperature());
+    delay(2000);
+    Display_Clear();
     break;
   default:
     break;
   }
+}
+
+void MakeRequest()
+{
+  ApiRequest();
+  if (req_error)
+  {
+    Display_FailedMessage();
+    return;
+  }
+
+  last_request = clock();
+
+  /* Parse received data */
+  ParseJson(client);
+  location = String(name) + ", " + String(sys_country);
+
+  /* Print to Serial for debug */
+  Serial.println(location);
+  Serial.print(parsed_date);
+  Serial.print(" ");
+  Serial.println(parsed_time);
+  Serial.println(real_temperature);
+  Serial.println(feelslike_temperature);
+  Serial.println(pressure);
+  Serial.println(humidity);
+
+  Display_ShowData(INFO);
+  delay(2000);
+  Display_ShowData(TEMPERATURE);
+  delay(5000);
+  Display_ShowData(AROUND);
+  delay(5000);
+  Display_Clear();
 }
 
 void Interrupt_ButtonA()
@@ -148,6 +159,11 @@ void Interrupt_ButtonA()
 void Interrupt_ButtonB()
 {
   flag = B;
+}
+
+void Interrupt_ButtonC()
+{
+  flag = C;
 }
 
 void Display_ShowData(DataType_t data)
@@ -180,14 +196,27 @@ void Display_ShowData(DataType_t data)
     display.println(indoor_pressure);
     display.display();
     break;
+  case INDOOR_TEMP_PRECISE:
+    Display_Clear();
+    display.println("Indoor - MCP9808");
+    display.println(indoor_temperature);
+    display.display();
+    break;
   case AROUND:
     Display_Clear();
-    display.println("");
-    display.println(pressure);
-    display.println(humidity);
-    display.display();
     break;
   default:
     break;
   }
+}
+
+bool ValidateRequestInterval()
+{
+  clock_t now = clock();
+  int elapsed_seconds = double(now - last_request) / CLOCKS_PER_SEC;
+  if (elapsed_seconds < REQUEST_INTERVAL)
+  {
+    return true;
+  }
+  return false;
 }
