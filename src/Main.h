@@ -22,7 +22,8 @@ typedef enum
   INFO,
   TEMPERATURE,
   AROUND,
-  INDOOR
+  INDOOR,
+  INDOOR_TEMP_PRECISE,
 } DataType_t;
 
 extern String location;

@@ -22,6 +22,7 @@ clock_t last_request;
 void OnButtonPress(ButtonType_t btn);
 void Interrupt_ButtonA();
 void Interrupt_ButtonB();
+void Interrupt_ButtonC();
 void Display_ShowData(DataType_t data);
 void MakeRequest();
 bool ValidateRequestInterval();
@@ -38,6 +39,9 @@ void setup()
   /* Initialize BME280 sensor */
   BME280_Init();
 
+  /* Initialize MCP9808 sensor */
+  MCP9808_Init();
+
   /* Initialize display and clear it */
   Display_InitScreen();
   Display_Clear();
@@ -50,6 +54,7 @@ void setup()
   /* Interrupt based api data refresh */
   attachInterrupt(digitalPinToInterrupt(BUTTON_A), Interrupt_ButtonA, RISING);
   attachInterrupt(digitalPinToInterrupt(BUTTON_B), Interrupt_ButtonB, RISING);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_C), Interrupt_ButtonC, RISING);
 
   /* Make the first request */
   MakeRequest();
@@ -69,7 +74,7 @@ void loop()
   }
   else if (flag == C)
   {
-    // OnButtonPress(C);
+    OnButtonPress(C);
     flag = NOT_PRESSED;
   }
   else
@@ -99,6 +104,13 @@ void OnButtonPress(ButtonType_t btn)
     Display_Clear();
     break;
   case C:
+    MCP9808_Read();
+    Display_ShowData(INDOOR_TEMP_PRECISE);
+    Serial.println("INDOOR TEMPERATURE - MCP9808");
+    Serial.println("Precise temperature:");
+    Serial.println(MCP9808_temperature());
+    delay(2000);
+    Display_Clear();
     break;
   default:
     break;
@@ -149,6 +161,11 @@ void Interrupt_ButtonB()
   flag = B;
 }
 
+void Interrupt_ButtonC()
+{
+  flag = C;
+}
+
 void Display_ShowData(DataType_t data)
 {
   switch (data)
@@ -179,12 +196,14 @@ void Display_ShowData(DataType_t data)
     display.println(indoor_pressure);
     display.display();
     break;
+  case INDOOR_TEMP_PRECISE:
+    Display_Clear();
+    display.println("Indoor - MCP9808");
+    display.println(indoor_temperature);
+    display.display();
+    break;
   case AROUND:
     Display_Clear();
-    display.println("");
-    display.println(pressure);
-    display.println(humidity);
-    display.display();
     break;
   default:
     break;
