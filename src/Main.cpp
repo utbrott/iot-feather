@@ -18,6 +18,7 @@ ButtonType_t flag = NOT_PRESSED; // A button interrupt flag
 void OnButtonPress(ButtonType_t btn);
 void Interrupt_ButtonA();
 void Display_ShowData(DataType_t data);
+void MakeRequest();
 
 /*
  * @brief : Application entry point
@@ -40,23 +41,8 @@ void setup()
   /* Interrupt based api data refresh */
   attachInterrupt(digitalPinToInterrupt(BUTTON_A), Interrupt_ButtonA, RISING);
 
-  /* Make the request */
-  ApiRequest();
-  if (req_error)
-  {
-    Display_FailedMessage();
-  }
-  /* Parse received data */
-  ParseJson(client);
-  location = String(name) + ", " + String(sys_country);
-
-  Display_ShowData(INFO);
-  /* Print to Serial for debug */
-  Serial.println(location);
-  Serial.println(main_temp);
-  Serial.println(main_feels_like);
-  Serial.println(main_pressure);
-  Serial.println(main_humidity);
+  /* Make the first request */
+  MakeRequest();
 }
 
 void loop()
@@ -83,34 +69,7 @@ void OnButtonPress(ButtonType_t btn)
   switch (btn)
   {
   case A:
-    ApiRequest();
-    if (req_error)
-    {
-      Display_FailedMessage();
-      return;
-    }
-    /* Parse received data */
-    ParseJson(client);
-    location = String(name) + ", " + String(sys_country);
-    /* Print to Serial for debug */
-
-    Serial.println(location);
-    Serial.print(parsed_date);
-    Serial.print(" ");
-    Serial.println(parsed_time);
-    Serial.println(real_temperature);
-    Serial.println(feelslike_temperature);
-    Serial.println(pressure);
-    Serial.println(humidity);
-
-    Display_ShowData(INFO);
-    delay(2000);
-    Display_ShowData(TEMPERATURE);
-    delay(2000);
-    Display_ShowData(AROUND);
-    delay(2000);
-    Display_Clear();
-
+    MakeRequest();
     break;
   case B:
     break;
@@ -119,6 +78,38 @@ void OnButtonPress(ButtonType_t btn)
   default:
     break;
   }
+}
+
+void MakeRequest()
+{
+  ApiRequest();
+  if (req_error)
+  {
+    Display_FailedMessage();
+    return;
+  }
+
+  /* Parse received data */
+  ParseJson(client);
+  location = String(name) + ", " + String(sys_country);
+  
+  /* Print to Serial for debug */
+  Serial.println(location);
+  Serial.print(parsed_date);
+  Serial.print(" ");
+  Serial.println(parsed_time);
+  Serial.println(real_temperature);
+  Serial.println(feelslike_temperature);
+  Serial.println(pressure);
+  Serial.println(humidity);
+
+  Display_ShowData(INFO);
+  delay(2000);
+  Display_ShowData(TEMPERATURE);
+  delay(2000);
+  Display_ShowData(AROUND);
+  delay(2000);
+  Display_Clear();
 }
 
 void Interrupt_ButtonA()
