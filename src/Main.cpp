@@ -144,6 +144,8 @@ void OnButtonPress(ButtonType_t btn)
     Serial.println("INDOOR TEMPERATURE - MCP9808");
     Serial.println("Precise temperature:");
     Serial.println(MCP9808_temperature());
+    delay(2000);
+    Display_Clear();
     break;
   default:
     break;
@@ -203,10 +205,6 @@ void Display_ShowData(DataType_t data)
     break;
   case AROUND:
     Display_Clear();
-    display.println("");
-    display.println(pressure);
-    display.println(humidity);
-    display.display();
     break;
   default:
     break;
