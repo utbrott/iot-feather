@@ -11,6 +11,9 @@ sensors_event_t temp_event,
 
 bool BME_ACTIVE = false;
 
+Adafruit_MCP9808 mcp;
+bool MCP_ACTIVE = false;
+
 void BME280_Init()
 {
     if (!bme.begin())
@@ -64,4 +67,37 @@ void BME280_Read()
     indoor_temperature.concat(" *C");
     indoor_pressure = String(BME280_pressure());
     indoor_pressure.concat(" hPa");
+}
+
+void MCP9808_Init()
+{
+    if (!mcp.begin(0x18))
+    {
+        Serial.println(F("Could not find a valid MCP9808 sensor, check wiring!"));
+    }
+    else
+    {
+        mcp.setResolution(3);
+        MCP_ACTIVE = true;
+    }
+}
+
+float MCP9808_temperature()
+{
+    if (MCP_ACTIVE)
+    {
+        mcp.wake();
+        float temperature = mcp.readTempC();
+        mcp.shutdown_wake(1);
+        return temperature;
+    }
+    else
+        return .0;
+}
+void MCP9808_Read()
+{
+    indoor_humidity = String();
+    indoor_temperature = String(MCP9808_temperature());
+    indoor_temperature.concat(" *C");
+    indoor_pressure = String();
 }
