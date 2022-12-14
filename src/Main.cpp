@@ -16,12 +16,15 @@ String indoor_humidity;
 String indoor_pressure;
 String indoor_temperature;
 ButtonType_t flag = NOT_PRESSED; // A button interrupt flag
+clock_t last_request;
 
 /* Private function prototypes*/
 void OnButtonPress(ButtonType_t btn);
 void Interrupt_ButtonA();
 void Interrupt_ButtonB();
 void Display_ShowData(DataType_t data);
+void MakeRequest();
+bool ValidateRequestInterval();
 
 /*
  * @brief : Application entry point
@@ -48,23 +51,8 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(BUTTON_A), Interrupt_ButtonA, RISING);
   attachInterrupt(digitalPinToInterrupt(BUTTON_B), Interrupt_ButtonB, RISING);
 
-  /* Make the request */
-  ApiRequest();
-  if (req_error)
-  {
-    Display_FailedMessage();
-  }
-  /* Parse received data */
-  ParseJson(client);
-  location = String(name) + ", " + String(sys_country);
-
-  Display_ShowData(INFO);
-  /* Print to Serial for debug */
-  Serial.println(location);
-  Serial.println(main_temp);
-  Serial.println(main_feels_like);
-  Serial.println(main_pressure);
-  Serial.println(main_humidity);
+  /* Make the first request */
+  MakeRequest();
 }
 
 void loop()
@@ -84,6 +72,10 @@ void loop()
     // OnButtonPress(C);
     flag = NOT_PRESSED;
   }
+  else
+  {
+      MakeRequest();
+  }
 }
 
 void OnButtonPress(ButtonType_t btn)
@@ -91,34 +83,7 @@ void OnButtonPress(ButtonType_t btn)
   switch (btn)
   {
   case A:
-    ApiRequest();
-    if (req_error)
-    {
-      Display_FailedMessage();
-      return;
-    }
-    /* Parse received data */
-    ParseJson(client);
-    location = String(name) + ", " + String(sys_country);
-    /* Print to Serial for debug */
-
-    Serial.println(location);
-    Serial.print(parsed_date);
-    Serial.print(" ");
-    Serial.println(parsed_time);
-    Serial.println(real_temperature);
-    Serial.println(feelslike_temperature);
-    Serial.println(pressure);
-    Serial.println(humidity);
-
-    Display_ShowData(INFO);
-    delay(2000);
-    Display_ShowData(TEMPERATURE);
-    delay(2000);
-    Display_ShowData(AROUND);
-    delay(2000);
-    Display_Clear();
-
+    MakeRequest();
     break;
   case B:
     BME280_Read();
@@ -138,6 +103,40 @@ void OnButtonPress(ButtonType_t btn)
   default:
     break;
   }
+}
+
+void MakeRequest()
+{
+  ApiRequest();
+  if (req_error)
+  {
+    Display_FailedMessage();
+    return;
+  }
+
+  last_request = clock();
+
+  /* Parse received data */
+  ParseJson(client);
+  location = String(name) + ", " + String(sys_country);
+
+  /* Print to Serial for debug */
+  Serial.println(location);
+  Serial.print(parsed_date);
+  Serial.print(" ");
+  Serial.println(parsed_time);
+  Serial.println(real_temperature);
+  Serial.println(feelslike_temperature);
+  Serial.println(pressure);
+  Serial.println(humidity);
+
+  Display_ShowData(INFO);
+  delay(2000);
+  Display_ShowData(TEMPERATURE);
+  delay(5000);
+  Display_ShowData(AROUND);
+  delay(5000);
+  Display_Clear();
 }
 
 void Interrupt_ButtonA()
@@ -190,4 +189,15 @@ void Display_ShowData(DataType_t data)
   default:
     break;
   }
+}
+
+bool ValidateRequestInterval()
+{
+  clock_t now = clock();
+  int elapsed_seconds = double(now - last_request) / CLOCKS_PER_SEC;
+  if (elapsed_seconds < REQUEST_INTERVAL)
+  {
+    return true;
+  }
+  return false;
 }

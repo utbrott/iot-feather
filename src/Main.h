@@ -5,6 +5,8 @@
 #include "WebClient.h"
 #include "JsonParser.h"
 #include "Display.h"
+#include <ctime>
+#define REQUEST_INTERVAL 600
 #include "IndoorSensors.h"
 
 typedef enum
