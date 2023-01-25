@@ -25,6 +25,9 @@ void Interrupt_ButtonB();
 void Interrupt_ButtonC();
 void Display_ShowData(DataType_t data);
 void MakeRequest();
+void SendAndDisplayRequest();
+void DisplayBmeData();
+void DisplayMcpData();
 bool ValidateRequestInterval();
 
 /*
@@ -64,23 +67,34 @@ void loop()
 {
   if (flag == A)
   {
-    OnButtonPress(A);
-    flag = NOT_PRESSED;
+    SendAndDisplayRequest();
   }
   else if (flag == B)
   {
-    OnButtonPress(B);
-    flag = NOT_PRESSED;
+    DisplayBmeData();
   }
   else if (flag == C)
   {
-    OnButtonPress(C);
-    flag = NOT_PRESSED;
+    DisplayMcpData();
   }
-  else
-  {
-      MakeRequest();
-  }
+}
+
+void SendAndDisplayRequest()
+{
+  OnButtonPress(A);
+  flag = NOT_PRESSED;
+}
+
+void DisplayBmeData()
+{
+  OnButtonPress(B);
+  flag = NOT_PRESSED;
+}
+
+void DisplayMcpData()
+{
+  OnButtonPress(C);
+  flag = NOT_PRESSED;
 }
 
 void OnButtonPress(ButtonType_t btn)
@@ -146,8 +160,6 @@ void MakeRequest()
   delay(2000);
   Display_ShowData(TEMPERATURE);
   delay(5000);
-  Display_ShowData(AROUND);
-  delay(5000);
   Display_Clear();
 }
 
@@ -172,9 +184,6 @@ void Display_ShowData(DataType_t data)
   {
   case INFO:
     Display_Clear();
-    // display.print(name);
-    // display.print(", ");
-    // display.println(sys_country);
     display.println(location);
     display.println("Last fetch:");
     display.println(parsed_date);
@@ -201,9 +210,6 @@ void Display_ShowData(DataType_t data)
     display.println("Indoor - MCP9808");
     display.println(indoor_temperature);
     display.display();
-    break;
-  case AROUND:
-    Display_Clear();
     break;
   default:
     break;
